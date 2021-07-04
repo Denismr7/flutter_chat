@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
-  const AuthForm();
+  final void Function(
+    String email,
+    String password,
+    String username,
+    bool isLogin,
+    BuildContext context,
+  ) submitAuth;
+  final bool isLoading;
+  const AuthForm(this.submitAuth, this.isLoading);
 
   @override
   _AuthFormState createState() => _AuthFormState();
@@ -19,8 +27,13 @@ class _AuthFormState extends State<AuthForm> {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
       _formKey.currentState!.save();
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hey ${_authData['username']}!')));
+      widget.submitAuth(
+        _authData['email']?.trim() ?? "",
+        _authData['password']?.trim() ?? "",
+        _authData['username']?.trim() ?? "",
+        _isLogin,
+        context,
+      );
     }
   }
 
@@ -55,6 +68,26 @@ class _AuthFormState extends State<AuthForm> {
     }
 
     return null;
+  }
+
+  List<Widget> _buildButtons() {
+    return [
+      ElevatedButton(
+        onPressed: _onSubmit,
+        child: Text(_isLogin ? 'Login' : 'Signup'),
+      ),
+      TextButton(
+        onPressed: () {
+          setState(() {
+            _isLogin = !_isLogin;
+          });
+        },
+        child: Text(_isLogin ? 'Create new account' : 'I have an account'),
+        style: TextButton.styleFrom(
+          onSurface: Theme.of(context).primaryColor,
+        ),
+      ),
+    ];
   }
 
   @override
@@ -98,23 +131,11 @@ class _AuthFormState extends State<AuthForm> {
                       validator: (val) => _validateInput(val, 'password'),
                     ),
                     SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: _onSubmit,
-                      child: Text(_isLogin ? 'Login' : 'Signup'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _isLogin = !_isLogin;
-                        });
-                      },
-                      child: Text(_isLogin
-                          ? 'Create new account'
-                          : 'I have an account'),
-                      style: TextButton.styleFrom(
-                        onSurface: Theme.of(context).primaryColor,
-                      ),
-                    )
+                    widget.isLoading
+                        ? CircularProgressIndicator()
+                        : Column(
+                            children: _buildButtons(),
+                          )
                   ],
                 )),
           ),
