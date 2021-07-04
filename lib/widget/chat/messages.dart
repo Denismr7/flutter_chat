@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'message_bubble.dart';
 
 class Messages extends StatelessWidget {
   const Messages();
@@ -19,10 +22,16 @@ class Messages extends StatelessWidget {
           }
           final documents =
               (snapshot.data as QuerySnapshot<Map<String, dynamic>>).docs;
+          final currentUser = FirebaseAuth.instance.currentUser;
           return ListView.builder(
             reverse: true,
             itemCount: documents.length,
-            itemBuilder: (ctx, index) => Text(documents[index]['text']),
+            itemBuilder: (ctx, index) => MessageBubble(
+              key: ValueKey(documents[index].id),
+              message: documents[index]['text'],
+              isMe:
+                  documents[index]['userId'] == currentUser!.uid ? true : false,
+            ),
           );
         });
   }
