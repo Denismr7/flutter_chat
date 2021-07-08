@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +9,10 @@ import './screens/auth_screen.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message: ${message.messageId}");
 }
 
 class MyApp extends StatefulWidget {
@@ -45,6 +50,8 @@ class _MyAppState extends State<MyApp> {
                     ? StreamBuilder(
                         stream: FirebaseAuth.instance.authStateChanges(),
                         builder: (ctx, snapshot) {
+                          FirebaseMessaging.onBackgroundMessage(
+                              _firebaseMessagingBackgroundHandler);
                           if (snapshot.hasData) {
                             return ChatScreen();
                           }

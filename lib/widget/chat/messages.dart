@@ -30,7 +30,7 @@ class Messages extends StatelessWidget {
               key: ValueKey(documents[index].id),
               message: documents[index]['text'],
               username: documents[index]['username'],
-              userImage: documents[index]['user_image'],
+              userImage: documents[index]['userImage'],
               isMe:
                   documents[index]['userId'] == currentUser!.uid ? true : false,
             ),
