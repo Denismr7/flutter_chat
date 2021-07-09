@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import './screens/chat_screen.dart';
 import './screens/auth_screen.dart';
+import './screens/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,6 +53,10 @@ class _MyAppState extends State<MyApp> {
                         builder: (ctx, snapshot) {
                           FirebaseMessaging.onBackgroundMessage(
                               _firebaseMessagingBackgroundHandler);
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SplashScreen();
+                          }
                           if (snapshot.hasData) {
                             return ChatScreen();
                           }
