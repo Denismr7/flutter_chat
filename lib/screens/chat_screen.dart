@@ -15,7 +15,8 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   Future<void> initMessages() async {
-    await FirebaseMessaging.instance.getToken();
+    final fbm = FirebaseMessaging.instance;
+    await fbm.getToken();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Got a message whilst in the foreground!');
       print('Message data: ${message.data}');
@@ -29,6 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
       print(message);
       return;
     });
+    fbm.subscribeToTopic('chat');
   }
 
   @override
